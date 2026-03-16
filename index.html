@@ -194,6 +194,7 @@ let backImage = "cartes/back.png";
 
 let deck = [...cardList];
 let discardPile = [];
+let currentCard = null;
 
 let deckDiv = document.getElementById("deck");
 let discardDiv = document.getElementById("discard");
@@ -274,27 +275,27 @@ alert("S'han acabat les cartes! Prem 'Barreja totes les cartes' per començar de
 return;
 }
 
+// si ja hi ha carta al centre → va a descartes
+if(currentCard !== null){
+discardPile.push(currentCard);
+renderDiscard();
+}
+
 let randomIndex = Math.floor(Math.random() * deck.length);
 let card = deck.splice(randomIndex,1)[0];
 
-// mostrar revers al centre
+currentCard = card;
+
+// mostrar revers
 currentCardDiv.innerHTML = `<img src="${backImage}" id="flip-card">`;
 
 let flipCard = document.getElementById("flip-card");
 
-// fer flip
+// animació flip
 setTimeout(() => {
 
 flipCard.classList.add("card-flip");
 flipCard.src = card;
-
-// DESPRÉS del flip la carta passa a descartes
-setTimeout(() => {
-
-discardPile.push(card);
-renderDiscard();
-
-},600);
 
 },100);
 
