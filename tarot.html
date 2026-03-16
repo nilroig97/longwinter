@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Roba una carta</title>
+<style>
+body {
+    font-family: serif;
+    background: #111;
+    color: white;
+    text-align: center;
+    padding-top: 50px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 18px;
+    background: #7a2cff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover {
+    background: #9b4dff;
+}
+
+#game {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 50px;
+    margin-top: 50px;
+}
+
+#deck-container, #discard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#deck img, #discard img, #current-card img {
+    max-width: 150px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px black;
+    cursor: pointer;
+    transition: transform 0.8s;
+    backface-visibility: hidden;
+}
+
+#current-card img {
+    max-width: 250px;
+}
+
+.card-flip {
+    transform: rotateY(180deg);
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<h1>Roba una carta</h1>
+<div>
+    <button onclick="drawCard()">Roba una carta</button>
+    <button onclick="shuffleDeck()">Barreja totes les cartes</button>
+</div>
+
+<div id="game">
+    <div id="deck-container">
+        <h3>Baralla</h3>
+        <div id="deck"></div>
+    </div>
+
+    <div id="current-card">
+        <!-- Carta actual sortirà aquí -->
+    </div>
+
+    <div id="discard-container">
+        <h3>Descarte</h3>
+        <div id="discard"></div>
+    </div>
+</div>
+
+<script>
+// ----------------------
+// CONFIGURA AQUÍ LES CARTES
+// ----------------------
+
+// carpeta "cartes", ex: "cartes/carta1.jpg"
+// Exemple amb 5 cartes, afegeix fins a 60+
+let cardList = [
+"cartes/21-min.png",
+"cartes/23-min.png",
+"cartes/24-min.png",
+"cartes/25-min.png",
+"cartes/26-min.png",
+"cartes/27-min.png",
+"cartes/28-min.png",
+"cartes/29-min.png",
+"cartes/30-min.png",
+"cartes/31-min.png",
+"cartes/32-min.png",
+"cartes/33-min.png",
+"cartes/34-min.png",
+"cartes/35-min.png",
+"cartes/36-min.png",
+"cartes/37-min.png",
+"cartes/38-min.png",
+"cartes/39-min.png",
+"cartes/40-min.png",
+"cartes/41-min.png",
+"cartes/42-min.png",
+"cartes/43-min.png",
+"cartes/44-min.png",
+"cartes/45-min.png",
+"cartes/46-min.png",
+"cartes/47-min.png",
+"cartes/48-min.png",
+"cartes/49-min.png",
+"cartes/50-min.png",
+"cartes/51-min.png",
+"cartes/52-min.png",
+"cartes/53-min.png",
+"cartes/54-min.png",
+"cartes/55-min.png",
+"cartes/56-min.png",
+"cartes/57-min.png",
+"cartes/58-min.png",
+"cartes/59-min.png",
+"cartes/60-min.png",
+"cartes/61-min.png",
+"cartes/62-min.png",
+"cartes/63-min.png",
+"cartes/64-min.png",
+"cartes/65-min.png",
+"cartes/66-min.png",
+"cartes/67-min.png",
+"cartes/68-min.png",
+"cartes/69-min.png",
+"cartes/70-min.png",
+"cartes/71-min.png",
+"cartes/72-min.png",
+"cartes/73-min.png",
+"cartes/74-min.png",
+"cartes/75-min.png",
+"cartes/76-min.png",
+"cartes/77-min.png",
+"cartes/78-min.png"
+];
+
+// imatge del revers
+let backImage = "cartes/back.png";
+
+// ----------------------
+// VARIABLES
+// ----------------------
+let deck = [...cardList]; // copia inicial
+let discardPile = [];
+
+let deckDiv = document.getElementById("deck");
+let discardDiv = document.getElementById("discard");
+let currentCardDiv = document.getElementById("current-card");
+
+// inicialitza la baralla visual
+function renderDeck() {
+    deckDiv.innerHTML = "";
+    if(deck.length > 0){
+        let topCard = document.createElement("img");
+        topCard.src = backImage;
+        deckDiv.appendChild(topCard);
+    }
+}
+
+function renderDiscard() {
+    discardDiv.innerHTML = "";
+    discardPile.forEach(c => {
+        let img = document.createElement("img");
+        img.src = c;
+        img.style.maxWidth = "100px";
+        discardDiv.appendChild(img);
+    });
+}
+
+// ----------------------
+// FUNCIONS PRINCIPALS
+// ----------------------
+function drawCard() {
+    if(deck.length === 0){
+        alert("S'han acabat les cartes! Prem 'Barreja totes les cartes' per començar de nou.");
+        return;
+    }
+
+    // triar carta aleatòria
+    let randomIndex = Math.floor(Math.random() * deck.length);
+    let card = deck.splice(randomIndex, 1)[0];
+    discardPile.push(card);
+
+    // mostrar carta amb animació gir
+    currentCardDiv.innerHTML = `<img src="${backImage}" id="flip-card">`;
+    let flipCard = document.getElementById("flip-card");
+
+    setTimeout(() => {
+        flipCard.classList.add("card-flip");
+        flipCard.src = card;
+    }, 100);
+
+    renderDeck();
+    renderDiscard();
+}
+
+function shuffleDeck() {
+    deck = deck.concat(discardPile);
+    discardPile = [];
+
+    // barrejar
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+
+    renderDeck();
+    renderDiscard();
+    alert("Les cartes han estat barrejades de nou!");
+}
+
+// ----------------------
+// INICIALITZACIÓ
+// ----------------------
+renderDeck();
+renderDiscard();
+</script>
+
+</body>
+</html>
