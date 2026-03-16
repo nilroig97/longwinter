@@ -270,32 +270,35 @@ discardDiv.appendChild(img);
 function drawCard() {
 
 if(deck.length === 0){
-
 alert("S'han acabat les cartes! Prem 'Barreja totes les cartes' per començar de nou.");
-
 return;
-
 }
 
 let randomIndex = Math.floor(Math.random() * deck.length);
-
 let card = deck.splice(randomIndex,1)[0];
 
-discardPile.push(card);
-
+// mostrar revers al centre
 currentCardDiv.innerHTML = `<img src="${backImage}" id="flip-card">`;
 
 let flipCard = document.getElementById("flip-card");
 
+// fer flip
 setTimeout(() => {
 
 flipCard.classList.add("card-flip");
 flipCard.src = card;
 
+// DESPRÉS del flip la carta passa a descartes
+setTimeout(() => {
+
+discardPile.push(card);
+renderDiscard();
+
+},600);
+
 },100);
 
 renderDeck();
-renderDiscard();
 
 }
 
